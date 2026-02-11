@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>Foydalanuvchi qo'shish</h1>
+    <form action="">
+        <input type="text" placeholder="Enter a name" name="name">
+        <button type="submit">Send</button>
+    </form>
+
+    <h1>Foydalanuvchilar ro'yhati</h1>
+    <ul id="list"></ul>
+
+
+    <script>
+        const form = document.querySelector('form')
+        const list = document.getElementById('list')
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault()
+
+            const inputValue = form.elements['name'].value
+            try {
+                const res = await fetch('http://localhost:4200/users', {
+                    method: "POST",
+                    headers: {
+                        'Content-Type': 'Application/json'
+                    },
+                    body: JSON.stringify({ name: inputValue })
+                })
+
+                const data = await res.json()
+                alert(data.users);
+                form.elements['name'].value = ''
+            } catch (error) {
+                
+            }
+
+            getUsers()
+        })
+
+        const getUsers = async() => {
+            list.innerHTML = ''
+            const res = await fetch('http://localhost:4200/users')
+            const data = await res.json()
+            data.map(user => {
+                const li = document.createElement('li')
+                list.appendChild(li)
+                li.innerText = user
+            })
+        }
+
+        getUsers()
+    </script>
+</body>
+</html>
